@@ -45,9 +45,13 @@ dashboard = [
   "pydeck>=0.9,<1",
   "streamlit>=1.41,<2",
 ]
+deploy = [
+  "psycopg[binary]>=3.2,<4",
+]
 dev = [
   "httpx>=0.28,<1",
   "mypy>=1.14,<2",
+  "pip-audit>=2.8,<3",
   "pytest>=8.3,<10",
   "pytest-cov>=6,<8",
   "ruff>=0.9,<1",
@@ -72,6 +76,10 @@ testpaths = ["tests"]
 [tool.coverage.run]
 branch = true
 source = ["roadwatch"]
+omit = [
+  "src/roadwatch/cli.py",
+  "src/roadwatch/dashboard/app.py",
+]
 
 [tool.coverage.report]
 fail_under = 85

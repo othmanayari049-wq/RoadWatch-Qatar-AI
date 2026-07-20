@@ -75,4 +75,3 @@ def annotate_image(image: Image.Image, prediction: Prediction) -> Image.Image:
         )
         draw.text((box.x1, label_top + 3), caption, fill="white", font=font)
     return annotated
-

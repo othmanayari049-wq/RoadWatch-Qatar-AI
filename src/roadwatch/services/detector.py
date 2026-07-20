@@ -114,9 +114,7 @@ class UltralyticsDetector:
             boxes = result.boxes.xyxy.cpu().tolist()
             confidences = result.boxes.conf.cpu().tolist()
             class_ids = result.boxes.cls.cpu().tolist()
-            for raw_box, confidence, class_id in zip(
-                boxes, confidences, class_ids, strict=True
-            ):
+            for raw_box, confidence, class_id in zip(boxes, confidences, class_ids, strict=True):
                 damage_class = normalize_damage_class(names[int(class_id)])
                 box = BoundingBox(
                     x1=float(raw_box[0]),

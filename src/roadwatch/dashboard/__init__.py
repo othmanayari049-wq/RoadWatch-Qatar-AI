@@ -3,4 +3,3 @@
 from roadwatch.dashboard.client import RoadWatchClient
 
 __all__ = ["RoadWatchClient"]
-

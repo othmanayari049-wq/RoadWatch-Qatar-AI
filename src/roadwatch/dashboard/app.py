@@ -71,9 +71,7 @@ def render_detection(client: RoadWatchClient) -> None:
     with left:
         latitude = st.number_input("Latitude", min_value=-90.0, max_value=90.0, value=25.2854)
     with right:
-        longitude = st.number_input(
-            "Longitude", min_value=-180.0, max_value=180.0, value=51.5310
-        )
+        longitude = st.number_input("Longitude", min_value=-180.0, max_value=180.0, value=51.5310)
     with privacy:
         include_location = st.checkbox("Attach location", value=True)
         persist = st.checkbox("Save result metadata", value=True)

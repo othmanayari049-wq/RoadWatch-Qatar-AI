@@ -62,4 +62,3 @@ def client() -> TestClient:
     app = create_app(settings=settings, detector=FakeDetector(), repository=repository)
     with TestClient(app) as test_client:
         yield test_client
-

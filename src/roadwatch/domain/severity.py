@@ -36,9 +36,7 @@ def assess_severity(
 
     confidence = min(max(confidence, 0.0), 1.0)
     normalized_area = min(max(area_ratio, 0.0) / 0.10, 1.0)
-    raw = 100 * (
-        0.45 * confidence + 0.35 * normalized_area + 0.20 * CLASS_PRIOR[damage_class]
-    )
+    raw = 100 * (0.45 * confidence + 0.35 * normalized_area + 0.20 * CLASS_PRIOR[damage_class])
     score = round(min(max(raw, 0.0), 100.0), 1)
 
     if score < 40:
@@ -48,4 +46,3 @@ def assess_severity(
     else:
         level = Severity.HIGH
     return SeverityAssessment(score=score, level=level)
-

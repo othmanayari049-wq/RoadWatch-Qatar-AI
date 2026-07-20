@@ -1,0 +1,53 @@
+name: roadwatch-qatar-ai
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: roadwatch
+      POSTGRES_USER: roadwatch
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U roadwatch -d roadwatch"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    environment:
+      ROADWATCH_ENVIRONMENT: production
+      ROADWATCH_DATABASE_URL: postgresql+psycopg://roadwatch:${POSTGRES_PASSWORD:-local-development-only}@postgres:5432/roadwatch
+      ROADWATCH_MODEL_PATH: /app/models/best.pt
+      ROADWATCH_MODEL_DEVICE: ${ROADWATCH_MODEL_DEVICE:-cpu}
+      ROADWATCH_CORS_ORIGINS: '["http://localhost:8501"]'
+    volumes:
+      - ./models:/app/models:ro
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.dashboard
+    environment:
+      ROADWATCH_API_URL: http://api:8000
+    ports:
+      - "8501:8501"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+

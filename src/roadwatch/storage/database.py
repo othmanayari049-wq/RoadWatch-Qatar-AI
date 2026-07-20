@@ -148,4 +148,3 @@ class InspectionRepository:
             source_filename=record.source_filename,
             prediction=Prediction.model_validate_json(record.prediction_json),
         )
-

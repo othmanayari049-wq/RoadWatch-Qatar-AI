@@ -15,4 +15,3 @@ class ModelUnavailableError(RoadWatchError):
 
 class UnknownDamageClassError(RoadWatchError):
     """Raised when model metadata does not map to the RDD2022 class system."""
-

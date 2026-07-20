@@ -93,9 +93,7 @@ class RoadWatchClient:
             ) from exc
         if not response.is_success:
             detail = (
-                payload.get("detail", "Request failed")
-                if isinstance(payload, dict)
-                else payload
+                payload.get("detail", "Request failed") if isinstance(payload, dict) else payload
             )
             raise DashboardAPIError(f"{response.status_code}: {detail}")
         return payload
