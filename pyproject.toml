@@ -35,7 +35,7 @@ dependencies = [
 
 [project.optional-dependencies]
 ml = [
-  "opencv-python-headless>=4.10,<5",
+  "opencv-python-headless>=4.10,<6",
   "ultralytics>=8.3,<9",
 ]
 dashboard = [
@@ -50,7 +50,7 @@ deploy = [
 ]
 dev = [
   "httpx>=0.28,<1",
-  "mypy>=1.14,<2",
+  "mypy>=1.14,<3",
   "pip-audit>=2.8,<3",
   "pytest>=8.3,<10",
   "pytest-cov>=6,<8",
