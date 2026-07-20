@@ -1,0 +1,90 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "roadwatch-qatar-ai"
+version = "0.1.0"
+description = "AI-assisted road damage detection and geospatial inspection platform"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Mohamed Othman Ayari" }]
+keywords = ["computer-vision", "road-damage", "fastapi", "qatar", "smart-city"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+  "fastapi>=0.115,<1",
+  "numpy>=1.26,<3",
+  "pillow>=10.4,<13",
+  "prometheus-client>=0.21,<1",
+  "pydantic>=2.10,<3",
+  "pydantic-settings>=2.7,<3",
+  "python-multipart>=0.0.20,<1",
+  "sqlalchemy>=2.0,<3",
+  "structlog>=24.4,<27",
+  "uvicorn[standard]>=0.34,<1",
+]
+
+[project.optional-dependencies]
+ml = [
+  "opencv-python-headless>=4.10,<5",
+  "ultralytics>=8.3,<9",
+]
+dashboard = [
+  "httpx>=0.28,<1",
+  "pandas>=2.2,<4",
+  "plotly>=5.24,<7",
+  "pydeck>=0.9,<1",
+  "streamlit>=1.41,<2",
+]
+dev = [
+  "httpx>=0.28,<1",
+  "mypy>=1.14,<2",
+  "pytest>=8.3,<10",
+  "pytest-cov>=6,<8",
+  "ruff>=0.9,<1",
+]
+
+[project.urls]
+Homepage = "https://github.com/othmanayari049-wq/RoadWatch-Qatar-AI"
+Repository = "https://github.com/othmanayari049-wq/RoadWatch-Qatar-AI"
+Issues = "https://github.com/othmanayari049-wq/RoadWatch-Qatar-AI/issues"
+
+[project.scripts]
+roadwatch = "roadwatch.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/roadwatch"]
+
+[tool.pytest.ini_options]
+addopts = "-ra --strict-markers --strict-config"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["roadwatch"]
+
+[tool.coverage.report]
+fail_under = 85
+show_missing = true
+skip_covered = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+plugins = ["pydantic.mypy"]
+
