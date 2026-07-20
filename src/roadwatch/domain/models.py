@@ -1,6 +1,6 @@
 """Validated domain models shared by the API, detector, and dashboard."""
 
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Annotated
 from uuid import UUID, uuid4
@@ -85,7 +85,7 @@ class Prediction(BaseModel):
     model_config = ConfigDict(frozen=True)
 
     id: UUID = Field(default_factory=uuid4)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     model_version: str
     image_width: int = Field(gt=0)
     image_height: int = Field(gt=0)
@@ -105,3 +105,24 @@ class ErrorResponse(BaseModel):
     detail: str
     request_id: str | None = None
 
+
+class StoredInspection(BaseModel):
+    """Persisted prediction plus non-sensitive source metadata."""
+
+    model_config = ConfigDict(frozen=True)
+
+    source_filename: str
+    prediction: Prediction
+
+
+class AnalyticsSummary(BaseModel):
+    """Portfolio and dashboard-level aggregate inspection statistics."""
+
+    model_config = ConfigDict(frozen=True)
+
+    total_inspections: int = Field(ge=0)
+    total_detections: int = Field(ge=0)
+    geotagged_inspections: int = Field(ge=0)
+    average_inference_ms: float = Field(ge=0)
+    damage_class_counts: dict[DamageClass, int]
+    severity_counts: dict[Severity, int]
