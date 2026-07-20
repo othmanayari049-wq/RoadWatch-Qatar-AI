@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     app_name: str = "RoadWatch Qatar AI"
     environment: Literal["development", "test", "production"] = "development"
     log_level: str = "INFO"
-    api_host: str = "0.0.0.0"
+    api_host: str = "0.0.0.0"  # noqa: S104 - configured for container networking
     api_port: int = Field(default=8000, ge=1, le=65535)
     api_url: str = "http://localhost:8000"
     database_url: str = "sqlite:///./roadwatch.db"
@@ -44,4 +44,3 @@ def get_settings() -> Settings:
     """Return a cached settings instance for dependency injection."""
 
     return Settings()
-

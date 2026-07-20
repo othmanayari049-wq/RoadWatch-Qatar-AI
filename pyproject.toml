@@ -20,6 +20,7 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 dependencies = [
+  "defusedxml>=0.7,<1",
   "fastapi>=0.115,<1",
   "numpy>=1.26,<3",
   "pillow>=10.4,<13",
@@ -50,6 +51,7 @@ dev = [
   "pytest>=8.3,<10",
   "pytest-cov>=6,<8",
   "ruff>=0.9,<1",
+  "types-defusedxml>=0.7,<1",
 ]
 
 [project.urls]
@@ -81,7 +83,10 @@ line-length = 100
 target-version = "py311"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF", "S"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101"]
 
 [tool.mypy]
 python_version = "3.12"
