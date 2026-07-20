@@ -4,7 +4,7 @@
 [![CodeQL](https://github.com/othmanayari049-wq/RoadWatch-Qatar-AI/actions/workflows/codeql.yml/badge.svg)](https://github.com/othmanayari049-wq/RoadWatch-Qatar-AI/actions/workflows/codeql.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB.svg)](https://www.python.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-0B7285.svg)](LICENSE)
-[![Tests: 43](https://img.shields.io/badge/tests-43%20passing-16A34A.svg)](tests)
+[![Tests: 45](https://img.shields.io/badge/tests-45%20passing-16A34A.svg)](tests)
 [![Coverage: 92%](https://img.shields.io/badge/coverage-92%25-16A34A.svg)](pyproject.toml)
 
 An end-to-end, production-oriented computer-vision platform for detecting visible road
@@ -41,14 +41,14 @@ severity, Pavement Condition Index, structural capacity, or a maintenance recomm
 - **Inspection API:** versioned resources, OpenAPI, request IDs, liveness/readiness, pagination,
   stable errors, and Prometheus metrics.
 - **Geospatial workflow:** optional WGS84 coordinates, interactive Qatar-centered map, severity
-  colors, inspection history, and aggregate charts.
+  colors, inspection history, downloadable annotated evidence/report, and aggregate charts.
 - **Privacy-aware storage:** raw uploaded image bytes are not persisted; saving prediction
   metadata is controllable per request.
 - **Reproducible ML:** official Figshare metadata, checksum verification, safe Pascal VOC
   parsing, YOLO conversion, geographic holdouts, seeded training, evaluation, and export.
 - **Deployment:** non-root API/dashboard containers, PostgreSQL Compose stack, health checks,
   environment configuration, and immutable model mount.
-- **Engineering quality:** strict typing, Ruff security rules, 43 tests, 92% coverage, CodeQL,
+- **Engineering quality:** strict typing, Ruff security rules, 45 tests, 92% coverage, CodeQL,
   dependency audit, Dependabot, and pre-commit hooks.
 - **Responsible AI:** data card, model card, Qatar acceptance requirements, failure analysis,
   human oversight, and explicit out-of-scope uses.
@@ -175,7 +175,7 @@ make check
 The local verified result for this commit is:
 
 ```text
-43 passed
+45 passed
 92% total branch-aware coverage
 Ruff: passed
 Mypy strict service-layer checks: passed
@@ -254,4 +254,3 @@ project with a Qatar smart-infrastructure focus.
 
 The software is available under the [Apache License 2.0](LICENSE). Dataset and model
 artifacts retain their own licenses and attribution requirements.
-

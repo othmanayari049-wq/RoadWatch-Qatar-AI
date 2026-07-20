@@ -39,6 +39,12 @@ def test_prediction_is_persisted_and_retrievable(client: TestClient) -> None:
     assert fetched.status_code == 200
     assert fetched.json() == body
 
+    report = client.get(f"/api/v1/inspections/{body['prediction']['id']}/report")
+    assert report.status_code == 200
+    assert "text/html" in report.headers["content-type"]
+    assert "attachment" in report.headers["content-disposition"]
+    assert "RoadWatch Qatar AI" in report.text
+
 
 def test_prediction_can_skip_persistence(client: TestClient) -> None:
     created = client.post(

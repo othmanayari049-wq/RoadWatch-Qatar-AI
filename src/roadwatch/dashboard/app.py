@@ -13,7 +13,8 @@ from PIL import Image
 
 from roadwatch.dashboard.client import DashboardAPIError, RoadWatchClient
 from roadwatch.domain.models import DamageClass, Severity, StoredInspection
-from roadwatch.services.image_io import annotate_image
+from roadwatch.services.image_io import annotate_image, encode_jpeg
+from roadwatch.services.reporting import render_html_report
 
 SEVERITY_COLORS = {
     Severity.LOW: [22, 163, 74, 190],
@@ -108,6 +109,24 @@ def render_detection(client: RoadWatchClient) -> None:
     with result_column:
         annotated = annotate_image(source, record.prediction)
         st.image(annotated, caption="AI-assisted detections", use_container_width=True)
+
+    download_image, download_report = st.columns(2)
+    with download_image:
+        st.download_button(
+            "Download annotated image",
+            data=encode_jpeg(annotated),
+            file_name=f"roadwatch-{record.prediction.id}.jpg",
+            mime="image/jpeg",
+            use_container_width=True,
+        )
+    with download_report:
+        st.download_button(
+            "Download inspection report",
+            data=render_html_report(record),
+            file_name=f"roadwatch-{record.prediction.id}.html",
+            mime="text/html",
+            use_container_width=True,
+        )
 
     prediction = record.prediction
     m1, m2, m3, m4 = st.columns(4)

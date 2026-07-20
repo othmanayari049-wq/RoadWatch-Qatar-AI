@@ -73,12 +73,17 @@ The response above illustrates the schema; it is not a claimed model result.
 ```http
 GET /api/v1/inspections?limit=50&offset=0
 GET /api/v1/inspections/{inspection_id}
+GET /api/v1/inspections/{inspection_id}/report
 GET /api/v1/analytics/summary
 ```
 
 Pagination accepts a limit from 1 to 200 and a non-negative offset. The summary returns
 inspection count, detection count, geotagged count, average inference time, class counts,
 and severity counts.
+
+The report endpoint downloads a self-contained, printable HTML report containing prediction
+metadata, location, detections, boxes, scores, and the responsible-use notice. Raw imagery is
+not embedded.
 
 ## Metrics
 
@@ -101,4 +106,3 @@ cardinality.
 
 Every HTTP response includes `X-Request-ID`. Clients may provide their own value through the
 same header for request correlation.
-

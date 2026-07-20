@@ -11,7 +11,7 @@ from uuid import UUID, uuid4
 from fastapi import FastAPI, File, Form, HTTPException, Request, Response, UploadFile, status
 from fastapi.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from prometheus_client import CONTENT_TYPE_LATEST, CollectorRegistry, Counter, Histogram
 from prometheus_client.exposition import generate_latest
 from pydantic import BaseModel
@@ -27,6 +27,7 @@ from roadwatch.domain.models import (
 from roadwatch.exceptions import ModelUnavailableError, RoadWatchError
 from roadwatch.services.detector import Detector, build_detector
 from roadwatch.services.image_io import decode_image
+from roadwatch.services.reporting import render_html_report
 from roadwatch.storage.database import Database, InspectionRepository
 
 
@@ -223,6 +224,23 @@ def create_app(
         if result is None:
             raise HTTPException(status_code=404, detail="Inspection not found")
         return result
+
+    @app.get(
+        "/api/v1/inspections/{inspection_id}/report",
+        response_class=HTMLResponse,
+        tags=["inspections"],
+    )
+    async def inspection_report(request: Request, inspection_id: UUID) -> HTMLResponse:
+        current_repository: InspectionRepository = request.app.state.repository
+        result = await run_in_threadpool(current_repository.get, inspection_id)
+        if result is None:
+            raise HTTPException(status_code=404, detail="Inspection not found")
+        return HTMLResponse(
+            content=render_html_report(result),
+            headers={
+                "Content-Disposition": f'attachment; filename="roadwatch-{inspection_id}.html"'
+            },
+        )
 
     @app.get(
         "/api/v1/analytics/summary",
