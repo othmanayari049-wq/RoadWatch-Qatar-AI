@@ -63,6 +63,7 @@ def test_coordinate_pair_is_required(client: TestClient) -> None:
         data={"latitude": "25.28"},
     )
     assert response.status_code == 422
+    assert response.json()["request_id"] == response.headers["X-Request-ID"]
 
 
 def test_invalid_image_is_rejected(client: TestClient) -> None:
@@ -72,11 +73,20 @@ def test_invalid_image_is_rejected(client: TestClient) -> None:
     )
     assert response.status_code == 400
     assert "not a valid" in response.json()["detail"]
+    assert response.json()["request_id"] == response.headers["X-Request-ID"]
 
 
 def test_missing_inspection_returns_404(client: TestClient) -> None:
     response = client.get(f"/api/v1/inspections/{uuid4()}")
     assert response.status_code == 404
+    assert response.json()["request_id"] == response.headers["X-Request-ID"]
+
+
+def test_validation_error_uses_the_stable_error_schema(client: TestClient) -> None:
+    response = client.get("/api/v1/inspections", params={"limit": "not-a-number"})
+    assert response.status_code == 422
+    assert "limit" in response.json()["detail"]
+    assert response.json()["request_id"] == response.headers["X-Request-ID"]
 
 
 def test_analytics_and_prometheus_metrics(client: TestClient) -> None:

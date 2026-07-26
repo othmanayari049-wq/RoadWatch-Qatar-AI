@@ -10,6 +10,7 @@ from uuid import UUID, uuid4
 
 from fastapi import FastAPI, File, Form, HTTPException, Request, Response, UploadFile, status
 from fastapi.concurrency import run_in_threadpool
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
 from prometheus_client import CONTENT_TYPE_LATEST, CollectorRegistry, Counter, Histogram
@@ -59,6 +60,22 @@ class Metrics:
             "Successful model predictions",
             registry=self.registry,
         )
+
+
+def request_id_for(request: Request) -> str | None:
+    """Return the correlation identifier assigned by the request middleware."""
+
+    return getattr(request.state, "request_id", request.headers.get("X-Request-ID"))
+
+
+def validation_detail(exc: RequestValidationError) -> str:
+    """Render FastAPI validation errors as one stable, user-displayable message."""
+
+    messages = []
+    for error in exc.errors():
+        location = ".".join(str(part) for part in error["loc"])
+        messages.append(f"{location}: {error['msg']}")
+    return "; ".join(messages) or "Request validation failed"
 
 
 def create_app(
@@ -115,6 +132,7 @@ def create_app(
     @app.middleware("http")
     async def request_context(request: Request, call_next: MiddlewareCallable) -> Response:
         request_id = request.headers.get("X-Request-ID", str(uuid4()))[:64]
+        request.state.request_id = request_id
         started = perf_counter()
         response = await call_next(request)
         elapsed = perf_counter() - started
@@ -128,14 +146,35 @@ def create_app(
 
     @app.exception_handler(RoadWatchError)
     async def roadwatch_error_handler(request: Request, exc: RoadWatchError) -> JSONResponse:
-        request_id = request.headers.get("X-Request-ID")
         code = (
             status.HTTP_503_SERVICE_UNAVAILABLE
             if isinstance(exc, ModelUnavailableError)
             else status.HTTP_400_BAD_REQUEST
         )
-        payload = ErrorResponse(detail=str(exc), request_id=request_id)
+        payload = ErrorResponse(detail=str(exc), request_id=request_id_for(request))
         return JSONResponse(status_code=code, content=payload.model_dump(mode="json"))
+
+    @app.exception_handler(HTTPException)
+    async def http_error_handler(request: Request, exc: HTTPException) -> JSONResponse:
+        """Keep application-raised HTTP errors compatible with the documented schema."""
+
+        payload = ErrorResponse(detail=str(exc.detail), request_id=request_id_for(request))
+        return JSONResponse(
+            status_code=exc.status_code,
+            content=payload.model_dump(mode="json"),
+            headers=exc.headers,
+        )
+
+    @app.exception_handler(RequestValidationError)
+    async def request_validation_error_handler(
+        request: Request, exc: RequestValidationError
+    ) -> JSONResponse:
+        """Expose validation failures without leaking framework-specific response shapes."""
+
+        payload = ErrorResponse(detail=validation_detail(exc), request_id=request_id_for(request))
+        return JSONResponse(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, content=payload.model_dump()
+        )
 
     @app.get("/health/live", response_model=HealthResponse, tags=["health"])
     async def live() -> HealthResponse:

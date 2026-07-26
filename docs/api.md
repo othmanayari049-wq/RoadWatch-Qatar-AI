@@ -104,5 +104,15 @@ cardinality.
 | 422 | Invalid form or pagination values |
 | 503 | Trained model is unavailable |
 
-Every HTTP response includes `X-Request-ID`. Clients may provide their own value through the
-same header for request correlation.
+Every error uses the same JSON shape:
+
+```json
+{
+  "detail": "Human-readable error summary",
+  "request_id": "correlation-id"
+}
+```
+
+Every HTTP response includes `X-Request-ID`, which matches the error body's `request_id` when
+an error occurs. Clients may provide their own value through the same header for request
+correlation.
