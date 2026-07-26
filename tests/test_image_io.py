@@ -43,6 +43,16 @@ def test_decode_rejects_malformed_bytes() -> None:
         decode_image(b"not-an-image", "image/jpeg", max_bytes=1_000_000)
 
 
+def test_decode_rejects_decompression_bombs(monkeypatch: pytest.MonkeyPatch) -> None:
+    def raise_bomb(*args: object, **kwargs: object) -> None:
+        del args, kwargs
+        raise Image.DecompressionBombError("too many pixels")
+
+    monkeypatch.setattr(Image, "open", raise_bomb)
+    with pytest.raises(InvalidImageError, match="not a valid"):
+        decode_image(b"looks-like-an-image", "image/jpeg", max_bytes=1_000_000)
+
+
 def test_decode_rejects_empty_payload() -> None:
     with pytest.raises(InvalidImageError, match="empty"):
         decode_image(b"", "image/jpeg", max_bytes=1_000_000)

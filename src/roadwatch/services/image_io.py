@@ -1,6 +1,7 @@
 """Secure image decoding and deterministic annotation utilities."""
 
 from io import BytesIO
+from threading import RLock
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps, UnidentifiedImageError
 
@@ -9,6 +10,7 @@ from roadwatch.exceptions import InvalidImageError
 
 SUPPORTED_CONTENT_TYPES = frozenset({"image/jpeg", "image/png", "image/webp"})
 MAX_IMAGE_PIXELS = 40_000_000
+_PILLOW_LIMIT_LOCK = RLock()
 
 
 def decode_image(data: bytes, content_type: str | None, max_bytes: int) -> Image.Image:
@@ -22,18 +24,21 @@ def decode_image(data: bytes, content_type: str | None, max_bytes: int) -> Image
     if len(data) > max_bytes:
         raise InvalidImageError(f"Image exceeds the {max_bytes // (1024 * 1024)} MB limit")
 
-    previous_limit = Image.MAX_IMAGE_PIXELS
-    Image.MAX_IMAGE_PIXELS = MAX_IMAGE_PIXELS
-    try:
-        with Image.open(BytesIO(data)) as source:
-            source.verify()
-        with Image.open(BytesIO(data)) as source:
-            image = ImageOps.exif_transpose(source).convert("RGB")
-            image.load()
-    except (UnidentifiedImageError, OSError, ValueError) as exc:
-        raise InvalidImageError("The upload is not a valid JPEG, PNG, or WebP image") from exc
-    finally:
-        Image.MAX_IMAGE_PIXELS = previous_limit
+    # Pillow's pixel limit is a process-wide setting. Lock while changing it so concurrent
+    # uploads cannot accidentally decode with another request's limit.
+    with _PILLOW_LIMIT_LOCK:
+        previous_limit = Image.MAX_IMAGE_PIXELS
+        Image.MAX_IMAGE_PIXELS = MAX_IMAGE_PIXELS
+        try:
+            with Image.open(BytesIO(data)) as source:
+                source.verify()
+            with Image.open(BytesIO(data)) as source:
+                image = ImageOps.exif_transpose(source).convert("RGB")
+                image.load()
+        except (Image.DecompressionBombError, UnidentifiedImageError, OSError, ValueError) as exc:
+            raise InvalidImageError("The upload is not a valid JPEG, PNG, or WebP image") from exc
+        finally:
+            Image.MAX_IMAGE_PIXELS = previous_limit
     return image
 
 
