@@ -17,9 +17,7 @@ ARTICLE_API = f"https://api.figshare.com/v2/articles/{ARTICLE_ID}"
 
 
 def article_metadata() -> dict[str, Any]:
-    request = urllib.request.Request(  # noqa: S310 - fixed official HTTPS endpoint
-        ARTICLE_API, headers={"User-Agent": "RoadWatch-Qatar-AI/0.1"}
-    )
+    request = urllib.request.Request(ARTICLE_API, headers={"User-Agent": "RoadWatch-Qatar-AI/0.1"})
     with urllib.request.urlopen(request, timeout=30) as response:  # noqa: S310
         return json.load(response)
 
