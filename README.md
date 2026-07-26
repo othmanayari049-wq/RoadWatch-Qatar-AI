@@ -216,6 +216,9 @@ Before a pilot, build an independent Qatar acceptance set covering dust, glare, 
 night scenes, road markings, repaired surfaces, different devices, and multiple road types.
 Group samples by location and report per-class and condition-level results.
 
+Use the [Qatar pilot acceptance protocol](docs/qatar-pilot-protocol.md) to document collection,
+labels, split design, required analysis, human review, and the final acceptance decision.
+
 Primary references:
 
 - [Official RDD2022 dataset (Figshare)](https://doi.org/10.6084/m9.figshare.21431547)
@@ -244,6 +247,7 @@ or presenting evaluation results.
 - [Deployment guide](docs/deployment.md)
 - [RDD2022 data card](docs/data-card.md)
 - [Detector model card](docs/model-card.md)
+- [Qatar pilot acceptance protocol](docs/qatar-pilot-protocol.md)
 - [Contributing](CONTRIBUTING.md)
 - [Security policy](SECURITY.md)
 

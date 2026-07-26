@@ -89,6 +89,8 @@ permissions and governance. It should cover:
 
 Keep the local acceptance set isolated from model development. Report results by class,
 lighting condition, device, location, and relevant road type—not only one overall score.
+The [Qatar pilot acceptance protocol](qatar-pilot-protocol.md) provides the required collection,
+labelling, split, reviewer, and acceptance-decision record.
 
 ## Privacy and safety
 
@@ -97,4 +99,3 @@ metadata. Collection programs should apply local legal review, notice and permis
 required, data minimization, access control, retention limits, and redaction before sharing.
 The reference API does not persist uploaded image bytes, but operators remain responsible
 for the upstream collection and downstream copies.
-
