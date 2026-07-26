@@ -1,0 +1,54 @@
+name: Report a software defect
+description: Report a reproducible non-sensitive problem in RoadWatch Qatar AI.
+title: "fix: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include raw road images, precise locations, faces, license plates, secrets, or
+        vulnerability details. For a security concern, follow SECURITY.md instead.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the observed behavior and the expected behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Safe reproduction steps
+      description: Provide the smallest safe example that reproduces the problem.
+      placeholder: |
+        1. Start the API with ...
+        2. Call ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: RoadWatch version or commit
+      placeholder: "e.g. 0.1.0 or abc1234"
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment and logs
+      description: Include Python/OS details and sanitized logs only.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - API
+        - Dashboard
+        - Model/inference adapter
+        - Training pipeline
+        - Storage
+        - Documentation
+        - Deployment or CI
+    validations:
+      required: true

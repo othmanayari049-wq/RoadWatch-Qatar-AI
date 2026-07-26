@@ -1,0 +1,50 @@
+name: Propose an improvement
+description: Suggest a focused, responsible improvement to RoadWatch Qatar AI.
+title: "feat: "
+labels: []
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: Explain who is affected and what limitation this would address.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed approach
+      description: Describe the smallest useful scope and affected components.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: List observable conditions that show the work is complete.
+      placeholder: |
+        - [ ] ...
+        - [ ] ...
+    validations:
+      required: true
+  - type: textarea
+    id: safety
+    attributes:
+      label: Privacy, safety, and model-governance impact
+      description: State how the proposal affects images, location data, human review, or model claims.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Primary area
+      options:
+        - API
+        - Dashboard
+        - Model/inference adapter
+        - Training/evaluation
+        - Storage
+        - Documentation
+        - Deployment or CI
+    validations:
+      required: true

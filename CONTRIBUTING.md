@@ -29,6 +29,13 @@ On Windows PowerShell, activate the environment with `.venv\Scripts\Activate.ps1
   training runs.
 - Do not report model metrics without a reproducible artifact, split, and evaluation command.
 
+## Issues
+
+Use the repository issue forms for reproducible defects and focused feature proposals. They ask
+for acceptance criteria and safety impact so new work remains traceable. Do not share private
+road imagery, precise locations, secrets, or vulnerability details in a public issue; follow
+[SECURITY.md](SECURITY.md) for security reports.
+
 ## Commit style
 
 Use short, imperative conventional prefixes when practical:
@@ -56,4 +63,3 @@ A model contribution must include:
 ## Reporting security issues
 
 Do not open a public issue for a vulnerability. Follow [SECURITY.md](SECURITY.md).
-
