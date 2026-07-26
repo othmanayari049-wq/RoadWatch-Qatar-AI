@@ -154,8 +154,15 @@ def render_detection(client: RoadWatchClient) -> None:
 
 def render_map(client: RoadWatchClient) -> None:
     st.subheader("Geospatial inspection map")
+    severity_options = {
+        "All inspections": None,
+        "Low priority or higher": Severity.LOW,
+        "Medium priority or higher": Severity.MEDIUM,
+        "High priority only": Severity.HIGH,
+    }
+    selected_filter = st.selectbox("Minimum inspection priority", list(severity_options))
     try:
-        records = client.inspections()
+        records = client.inspections(minimum_severity=severity_options[selected_filter])
     except DashboardAPIError as exc:
         st.error(str(exc))
         return

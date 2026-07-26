@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from uuid import uuid4
+
 from roadwatch.domain.models import (
     BoundingBox,
     DamageClass,
@@ -59,6 +61,21 @@ def test_list_is_newest_first() -> None:
     records = repository.list()
     assert len(records) == 2
     assert {item.source_filename for item in records} == {"first.jpg", "second.jpg"}
+
+
+def test_list_filters_by_minimum_severity() -> None:
+    repository = make_repository()
+    high = sample_prediction()
+    low_detection = high.detections[0].model_copy(
+        update={"severity": Severity.LOW, "severity_score": 25.0}
+    )
+    low = high.model_copy(update={"id": uuid4(), "detections": (low_detection,)})
+    repository.save(high, "high.jpg")
+    repository.save(low, "low.jpg")
+
+    records = repository.list(minimum_severity=Severity.HIGH)
+
+    assert [item.source_filename for item in records] == ["high.jpg"]
 
 
 def test_summary_aggregates_predictions() -> None:

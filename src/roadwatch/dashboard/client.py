@@ -8,7 +8,7 @@ from uuid import UUID
 
 import httpx
 
-from roadwatch.domain.models import AnalyticsSummary, StoredInspection
+from roadwatch.domain.models import AnalyticsSummary, Severity, StoredInspection
 
 
 class DashboardAPIError(RuntimeError):
@@ -70,8 +70,15 @@ class RoadWatchClient:
         payload = self._json_or_error(response)
         return StoredInspection.model_validate(payload)
 
-    def inspections(self, limit: int = 200) -> list[StoredInspection]:
-        response = self._client.get("/api/v1/inspections", params={"limit": limit})
+    def inspections(
+        self,
+        limit: int = 200,
+        minimum_severity: Severity | None = None,
+    ) -> list[StoredInspection]:
+        params: dict[str, str | int] = {"limit": limit}
+        if minimum_severity is not None:
+            params["minimum_severity"] = minimum_severity.value
+        response = self._client.get("/api/v1/inspections", params=params)
         payload = self._json_or_error(response)
         return [StoredInspection.model_validate(item) for item in payload]
 

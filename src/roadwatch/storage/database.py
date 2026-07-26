@@ -106,13 +106,29 @@ class InspectionRepository:
             record = session.get(InspectionRecord, str(inspection_id))
             return self._to_domain(record) if record else None
 
-    def list(self, limit: int = 50, offset: int = 0) -> list[StoredInspection]:
+    def list(
+        self,
+        limit: int = 50,
+        offset: int = 0,
+        minimum_severity: Severity | None = None,
+    ) -> list[StoredInspection]:
+        """List newest inspections, optionally limited to a minimum priority level."""
+
         statement = (
             select(InspectionRecord)
             .order_by(InspectionRecord.created_at.desc())
             .limit(min(max(limit, 1), 200))
             .offset(max(offset, 0))
         )
+        if minimum_severity is not None:
+            included_levels = {
+                Severity.LOW: (Severity.LOW, Severity.MEDIUM, Severity.HIGH),
+                Severity.MEDIUM: (Severity.MEDIUM, Severity.HIGH),
+                Severity.HIGH: (Severity.HIGH,),
+            }[minimum_severity]
+            statement = statement.where(
+                InspectionRecord.maximum_severity.in_(item.value for item in included_levels)
+            )
         with self._database.session() as session:
             records = session.scalars(statement).all()
             return [self._to_domain(record) for record in records]

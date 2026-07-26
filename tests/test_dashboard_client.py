@@ -6,6 +6,7 @@ import httpx
 import pytest
 
 from roadwatch.dashboard.client import DashboardAPIError, RoadWatchClient
+from roadwatch.domain.models import Severity
 
 
 def inspection_payload() -> dict[str, object]:
@@ -98,11 +99,12 @@ def test_predict_sends_multipart_and_validates_response() -> None:
 def test_list_and_get_inspections() -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         if request.url.path.endswith("/inspections"):
+            assert request.url.params["minimum_severity"] == "high"
             return httpx.Response(200, json=[inspection_payload()])
         return httpx.Response(200, json=inspection_payload())
 
     with RoadWatchClient("http://test", transport=httpx.MockTransport(handler)) as client:
-        records = client.inspections(limit=10)
+        records = client.inspections(limit=10, minimum_severity=Severity.HIGH)
         fetched = client.inspection(records[0].prediction.id)
     assert len(records) == 1
     assert fetched.prediction.id == records[0].prediction.id

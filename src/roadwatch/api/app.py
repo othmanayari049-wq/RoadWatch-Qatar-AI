@@ -23,6 +23,7 @@ from roadwatch.domain.models import (
     AnalyticsSummary,
     ErrorResponse,
     GeoPoint,
+    Severity,
     StoredInspection,
 )
 from roadwatch.exceptions import ModelUnavailableError, RoadWatchError
@@ -246,11 +247,17 @@ def create_app(
         request: Request,
         limit: int = 50,
         offset: int = 0,
+        minimum_severity: Severity | None = None,
     ) -> list[StoredInspection]:
         if not 1 <= limit <= 200 or offset < 0:
             raise HTTPException(status_code=422, detail="Invalid pagination values")
         current_repository: InspectionRepository = request.app.state.repository
-        return await run_in_threadpool(current_repository.list, limit, offset)
+        return await run_in_threadpool(
+            current_repository.list,
+            limit,
+            offset,
+            minimum_severity,
+        )
 
     @app.get(
         "/api/v1/inspections/{inspection_id}",

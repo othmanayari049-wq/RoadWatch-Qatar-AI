@@ -71,15 +71,17 @@ The response above illustrates the schema; it is not a claimed model result.
 ## Inspection resources
 
 ```http
-GET /api/v1/inspections?limit=50&offset=0
+GET /api/v1/inspections?limit=50&offset=0&minimum_severity=medium
 GET /api/v1/inspections/{inspection_id}
 GET /api/v1/inspections/{inspection_id}/report
 GET /api/v1/analytics/summary
 ```
 
-Pagination accepts a limit from 1 to 200 and a non-negative offset. The summary returns
-inspection count, detection count, geotagged count, average inference time, class counts,
-and severity counts.
+Pagination accepts a limit from 1 to 200 and a non-negative offset. The optional
+`minimum_severity` query accepts `low`, `medium`, or `high` and returns inspections whose
+maximum priority is at or above that level; inspections with no detections are excluded when
+the filter is used. The summary returns inspection count, detection count, geotagged count,
+average inference time, class counts, and severity counts.
 
 The report endpoint downloads a self-contained, printable HTML report containing prediction
 metadata, location, detections, boxes, scores, and the responsible-use notice. Raw imagery is
